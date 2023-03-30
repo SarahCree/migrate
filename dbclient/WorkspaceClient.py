@@ -443,7 +443,7 @@ class WorkspaceClient(dbclient):
         if not os.path.exists(self.get_export_dir()):
             os.makedirs(self.get_export_dir(), exist_ok=True)
         items = self.get(WS_LIST, get_args).get('objects', None)
-        repos = self.get(REPOS).get('repos', None)
+        #repos = self.get(REPOS).get('repos', None)
         num_nbs = 0
         if self.is_verbose():
             logging.info("Listing: {0}".format(get_args['path']))
@@ -521,13 +521,13 @@ class WorkspaceClient(dbclient):
                         checkpoint_set.write(dir_path)
                         if num_nbs_plus:
                             num_nbs += num_nbs_plus
-        # log all repos
-        if repos_log_writer and repos:
-            for repo in repos:
-                repo_path = repo.get('path', "")
-                if not checkpoint_set.contains(repo_path) and not repo_path.startswith(tuple(exclude_prefixes)):
-                    repos_log_writer.write(json.dumps(repo) + '\n')
-                    checkpoint_set.write(repo_path)
+        # log all repos - NOT NEEDED FOR PVC
+        #if repos_log_writer and repos:
+        #    for repo in repos:
+        #        repo_path = repo.get('path', "")
+        #        if not checkpoint_set.contains(repo_path) and not repo_path.startswith(tuple(exclude_prefixes)):
+        #            repos_log_writer.write(json.dumps(repo) + '\n')
+        #            checkpoint_set.write(repo_path)
 
         return num_nbs
 
@@ -715,13 +715,13 @@ class WorkspaceClient(dbclient):
         checkpoint_repo_acl_set = self._checkpoint_service.get_checkpoint_key_set(
             wmconstants.WM_IMPORT, wmconstants.WORKSPACE_REPO_ACL_OBJECT)
 
-        with open(repo_acl_logs) as repo_acls_fp:
-            with ThreadPoolExecutor(max_workers=num_parallel) as executor:
-                futures = [
-                    executor.submit(self.apply_acl_on_object, repo_acl_str, acl_repo_error_logger, checkpoint_repo_acl_set)
-                    for repo_acl_str in repo_acls_fp]
-                concurrent.futures.wait(futures, return_when="FIRST_EXCEPTION")
-                propagate_exceptions(futures)
+        #with open(repo_acl_logs) as repo_acls_fp:
+        #    with ThreadPoolExecutor(max_workers=num_parallel) as executor:
+        #        futures = [
+        #            executor.submit(self.apply_acl_on_object, repo_acl_str, acl_repo_error_logger, checkpoint_repo_acl_set)
+        #            for repo_acl_str in repo_acls_fp]
+        #        concurrent.futures.wait(futures, return_when="FIRST_EXCEPTION")
+        #        propagate_exceptions(futures)
 
         print("Completed import ACLs of Repos, Notebooks and Directories")
 
@@ -901,14 +901,14 @@ class WorkspaceClient(dbclient):
         checkpoint_repo_set = self._checkpoint_service.get_checkpoint_key_set(
             wmconstants.WM_IMPORT, wmconstants.WORKSPACE_REPO_OBJECT)
 
-        with open(dir_repo_logs) as repo_fp:
-            with ThreadPoolExecutor(max_workers=num_parallel) as executor:
-                futures = [
-                    executor.submit(self.create_repo, repo_str, repo_error_logger,
-                                    checkpoint_repo_set)
-                    for repo_str in repo_fp]
-                concurrent.futures.wait(futures, return_when="FIRST_EXCEPTION")
-                propagate_exceptions(futures)
+        #with open(dir_repo_logs) as repo_fp:
+        #    with ThreadPoolExecutor(max_workers=num_parallel) as executor:
+        #        futures = [
+        #            executor.submit(self.create_repo, repo_str, repo_error_logger,
+        #                            checkpoint_repo_set)
+        #            for repo_str in repo_fp]
+        #        concurrent.futures.wait(futures, return_when="FIRST_EXCEPTION")
+        #        propagate_exceptions(futures)
 
     def create_repo(self, repo_str, error_logger, checkpoint_repo_set):
         api_path = '/repos'
