@@ -150,7 +150,7 @@ def create_clusters(data):
 
     return {'cluster_id': cluster_id, 'cluster_name': cluster_name, 'creator_user_name': creator_user_name, 'policy_id': policy_id, 'instance_profile': instance_profile}
 
-def create_jobs(data):
+def create_jobs(data, jobs_acls):
     job_ids = []
     job_names = []
     job_types = []
@@ -178,6 +178,7 @@ def create_jobs(data):
                 instance_profile.append('')
         except Exception as e:
             print("Error in creating jobs...")
+
     for a in jobs_acls:
         try:
             a = json.loads(a)
@@ -187,9 +188,8 @@ def create_jobs(data):
                         job_owners.append(j['user_name'])
         except:
             job_owners.append('')
-            
-    return {'job_ids': job_ids, 'job_names': job_names, 'job_type':job_types, 'job_creator':job_creators, 'job_owner':job_owners, 'instance_profile': instance_profile}
 
+    return {'job_ids': job_ids, 'job_names': job_names, 'job_type':job_types, 'job_creator':job_creators, 'job_owner': job_owners, 'instance_profile': instance_profile}
 
 def create_shared_logs(checkpoint = "", directory_name = "artifacts/Shared"):
     shared_path = f"./logs/{checkpoint}/{directory_name}"
